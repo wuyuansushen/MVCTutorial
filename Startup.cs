@@ -29,8 +29,8 @@ namespace MVCTutorial
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseAuthentication();//For User identity
+            app.UseAuthorization();//For resource identity
 
             app.UseEndpoints(endpoints =>
             {
