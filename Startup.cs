@@ -21,7 +21,7 @@ namespace MVCTutorial
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpContextAccessor();
-            services.AddSingleton<IIpReflection,IpReflection>();
+            services.AddTransient<IIpReflection,IpReflection>();
             services.AddDirectoryBrowser();
 
             services.AddControllersWithViews();
