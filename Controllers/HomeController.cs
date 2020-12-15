@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 
 namespace MVCTutorial.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController:Controller
     {
+        public HomeController(IIpReflection ipinfo)
+        {
+            
+        }
         public IActionResult Index()
         {
-            return Ok();
+            return View("/Views/Home/Index.cshtml");
         }
     }
+    
 }
