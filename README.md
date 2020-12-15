@@ -1,4 +1,4 @@
-﻿# aspnetcore Web
+﻿# MVCTutorial
 
 ## 1.Install dotnet 5.0
 
