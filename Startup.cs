@@ -8,6 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.StaticFiles;
+using MVCTutorial.Models;
 
 namespace MVCTutorial
 {
@@ -24,6 +29,10 @@ namespace MVCTutorial
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddHttpContextAccessor();
+            services.AddScoped<IIpReflection,IpReflectionModel>();
+            services.AddDirectoryBrowser();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,6 +40,7 @@ namespace MVCTutorial
         {
             if (env.IsDevelopment())
             {
+
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -40,17 +50,31 @@ namespace MVCTutorial
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
+
+            //Add .apk file support
+            var ExtProvider = new FileExtensionContentTypeProvider();
+            ExtProvider.Mappings[".apk"] = "application/vnd.android.package-archive";
 
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
+            
+            string locationPath = env.ContentRootPath + @"/store";
+            var fileLocation = new PhysicalFileProvider(locationPath);
+            app.UseStaticFiles(new StaticFileOptions() { RequestPath =(PathString)"/ftp", FileProvider=fileLocation,ContentTypeProvider=ExtProvider});
+            app.UseDirectoryBrowser(options:(new DirectoryBrowserOptions() { RequestPath="/ftp",FileProvider=fileLocation}));
+
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    name: "default", pattern: "{controller:alpha}/{action:alpha}/{id?}",
+                    constraints:new {controller="[a-zA-Z0-9]*"},
+                    defaults:new { controller="Home",action="Index"}
+                    );
             });
         }
     }
