@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
 using MVCTutorial.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace MVCTutorial
 {
@@ -29,6 +30,13 @@ namespace MVCTutorial
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options=>
+            { options.AccessDeniedPath = "/Account/Login";
+                options.Cookie.Name = "UserIdentity";
+                options.Cookie.Expiration = TimeSpan.FromMinutes(60.0);
+                options.LoginPath = "/Account/Login";
+            });
 
             services.AddHttpContextAccessor();
             services.AddScoped<IIpReflection,IpReflectionModel>();
@@ -53,14 +61,15 @@ namespace MVCTutorial
 
             app.UseStaticFiles();
 
-            //Add .apk file support
-            var ExtProvider = new FileExtensionContentTypeProvider();
-            ExtProvider.Mappings[".apk"] = "application/vnd.android.package-archive";
 
             app.UseRouting();
 
             app.UseAuthorization();
             app.UseAuthentication();
+
+            //Add .apk file support
+            var ExtProvider = new FileExtensionContentTypeProvider();
+            ExtProvider.Mappings[".apk"] = "application/vnd.android.package-archive";
             
             string locationPath = env.ContentRootPath + @"/store";
             var fileLocation = new PhysicalFileProvider(locationPath);
