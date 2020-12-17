@@ -31,13 +31,6 @@ namespace MVCTutorial
         {
             services.AddControllersWithViews();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options=>
-            { options.AccessDeniedPath = "/Account/Login";
-                options.Cookie.Name = "UserIdentity";
-                options.Cookie.Expiration = TimeSpan.FromMinutes(60.0);
-                options.LoginPath = "/Account/Login";
-            });
-
             services.AddHttpContextAccessor();
             services.AddScoped<IIpReflection,IpReflectionModel>();
             services.AddDirectoryBrowser();
@@ -64,14 +57,14 @@ namespace MVCTutorial
 
             app.UseRouting();
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             //Add .apk file support
             var ExtProvider = new FileExtensionContentTypeProvider();
             ExtProvider.Mappings[".apk"] = "application/vnd.android.package-archive";
             
-            string locationPath = env.ContentRootPath + @"/store";
+            string locationPath = env.ContentRootPath + @"/Storage";
             var fileLocation = new PhysicalFileProvider(locationPath);
             app.UseStaticFiles(new StaticFileOptions() { RequestPath =(PathString)"/ftp", FileProvider=fileLocation,ContentTypeProvider=ExtProvider});
             app.UseDirectoryBrowser(options:(new DirectoryBrowserOptions() { RequestPath="/ftp",FileProvider=fileLocation}));
