@@ -16,7 +16,7 @@ ProxyPassReverse "/" "http://127.0.0.1:5000/"
 </VirtualHost>
 ```
 
-## 3.Add an 'A' record for your <SubDomain>
+## 3.Add an 'A' record for your <SubDomain> on DNS
 
 ```
 <SubDomain>     0       IN      A       <IP>
